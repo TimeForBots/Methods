@@ -11,9 +11,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Author 		: Patrick Pedersen <ctx.xda@gmail.com>
-# Last updated  : 18:30 3/3/2017 CEST
+# Author 	: Patrick Pedersen <ctx.xda@gmail.com>
+# Last updated  : 17:22 3/4/2017 CEST
 # Description	: Simple ping pong script (request with /ping)
 
-def TimeFor(config, chat_id, args) :
-	config.exportBot().sendMessage(chat_id, "pong")
+def TimeFor(config, update, args) :
+	config.exportBot().sendMessage(update.message.chat_id, "pong")
