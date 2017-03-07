@@ -31,4 +31,4 @@ def TimeFor(config, update, args) :
 	greetings = ["Hey", "Hi", "Hello", "Welcome", "What's up", "Oi", "Sup", "Waddup", "Yo", "Ayy", "OMG it's", "Ello", "Holla", "Here comes"]
 
 	# Select random greeting from greetings list
-	bot.sendMessage(update.message.chat_id, greetings[random.randint(0, len(greetings))] + ' ' + senderFirstName)
+	bot.sendMessage(update.message.chat_id, greetings[random.randint(0, len(greetings) - 1)] + ' ' + senderFirstName)
