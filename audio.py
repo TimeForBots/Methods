@@ -42,7 +42,7 @@ def TimeFor(config, update, args) :
 				if file_id != -1 :
 						config.audioconfig.addOption(args[2], args[3], file_id)
 						config.audioconfig.save()
-						sendMessage("Successfully added " + args[2] + " to " + args[3])
+						sendMessage("Successfully added " + args[3] + " to " + args[2])
 				else :
 					sendMessage("Invalid audio file")
 			else :
