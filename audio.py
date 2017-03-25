@@ -1,4 +1,7 @@
+from Config   import toAudiocfg
 from datetime import datetime, timedelta
+
+#TODO call subobjects trough the array
 
 # Global vars
 bot = None
@@ -30,18 +33,25 @@ def TimeFor(config, update, args) :
 
 		# List command
 		if args[1] == "list" :
-			if argc > 2 : sendMessage(config.audioconfig.strlistSection(args[2]))
-			else        : sendMessage(config.audioconfig.strlist())
+			if argc > 2 : msg = config.audiolist.strlistSection(args[2])
+			else        : msg = config.audiolist.strlist()
+
+			if msg : sendMessage(msg) 
+			else   : sendMessage("No Audio entries found!")
 
 		# Push
 		elif argc == 4 and args[1] == "push" :
-			if config.audioconfig.has_section(args[2]) :
+			if config.audiolist.section(args[2]) :
 				sendMessage("Name set, awaiting upload")
 				file_id = pollForAudio(bot, update.update_id)
 
 				if file_id != -1 :
-						config.audioconfig.addOption(args[2], args[3], file_id)
-						config.audioconfig.save()
+						config.audiolist.section(args[2]).add(args[3], file_id)
+						config.audiocfg = toAudiocfg(config.audiolist, config.audiocfg) # Update audio configuration
+
+						with open(config.audiocfgPath, 'w') as cfg :
+							config.audiocfg.write(cfg)
+
 						sendMessage("Successfully added " + args[3] + " to " + args[2])
 				else :
 					sendMessage("Invalid audio file")
@@ -49,21 +59,25 @@ def TimeFor(config, update, args) :
 				sendMessage("Section " + args[2] + " not found!")
 
 		elif argc == 4 and args[1] == "remove" :
-			if config.audioconfig.has_section(args[2]) :
-				if config.audioconfig.has_option(args[2], args[3]) :
-					config.audioconfig.removeOption(args[2], args[3])
-					config.audioconfig.save()
-					sendMessage("Successfully removed " + args[2] + " from " + args[3])
+			if config.audiolist.section(args[2]) :
+				if config.audiolist.section(args[2]).audio(args[3]) :
+					config.audiolist.section(args[2]).remove(args[3])
+					config.audiocfg = toAudiocfg(config.audiolist, config.audiocfg) # Update audio configuration
+
+					with open(config.audiocfgPath, 'w') as cfg :
+						config.audiocfg.write(cfg)
+
+					sendMessage("Successfully removed " + args[3] + " from " + args[2])
 				else :
-					sendMessage("No such entry for " + args[3] + " found under " + args[3])
+					sendMessage("No such entry for " + args[3] + " found under " + args[2])
 			else :
 				sendMessage("Section " + args[2] + " not found!")
 
 		# Play
 		elif argc == 4 and args[1] == "play" :
-			if config.audioconfig.has_section(args[2]) :
-				if config.audioconfig.has_option(args[2], args[3]) :
-					bot.sendAudio(chat_id, config.audioconfig.getID(args[2], args[3]))
+			if config.audiolist.section(args[2]) :
+				if config.audiolist.section(args[2]).audio(args[3]) :
+					bot.sendAudio(chat_id, config.audiolist.section(args[2]).audio(args[3]).ID)
 				else :
 					sendMessage("No such entry for " + args[3] + " found under " + args[3])
 			else :
